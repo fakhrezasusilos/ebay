@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { elementGetText, elementIsDisplayed, elementIsClickable } from './element-action-util.js';
+import { elementGetText, elementIsDisplayed, elementIsClickable } from './element-action-utils.js';
 
 export const assertBrowserUrl = async (text) => {
   await browser.pause(2000); //to handle for expect not directly check when page loaded
