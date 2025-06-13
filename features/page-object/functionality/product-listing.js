@@ -10,6 +10,7 @@ class ProducListing {
 
   async noSearchResult(){
     await assertIncludeText(await SearchPage.emptySearchResult(),"No exact matches found");
+    await assertIncludeText(await SearchPage.searchResult(), "0 results");
   }
 
 }

@@ -1,3 +1,22 @@
+import reporter from "cucumber-html-reporter";
+import CucumberJsJson from "wdio-cucumberjs-json-reporter";
+import 'dotenv/config'
+import fs from "fs";
+import path from "path";
+const jsonDir = './report/'
+
+// Function to remove files in a directory
+const removeFilesInDirectory = (directory) => {
+  fs.readdirSync(directory).forEach((file) => {
+    const filePath = path.join(directory, file);
+    if (fs.statSync(filePath).isFile()) {
+      fs.unlinkSync(filePath);
+    } else if (fs.statSync(filePath).isDirectory()) {
+      fs.rmdirSync(filePath, { recursive: true });
+    }
+  });
+};
+
 export const config = {
   //
   // ====================
@@ -123,7 +142,22 @@ export const config = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: ['spec'],
+  reporters: [
+    [
+      "spec",
+      {
+        color: true,
+        realtimeReporting: true,
+      },
+    ],
+    [
+      'cucumberjs-json', {
+        jsonFolder: 'report/json/',
+        language: 'en',
+        reportFilePerRetry: false
+      }]
+  ],
+
 
   // If you are using Cucumber you need to specify the location of your step definitions.
   cucumberOpts: {
@@ -167,8 +201,9 @@ export const config = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: function (config, capabilities) {
-  // },
+  onPrepare: function (config, capabilities) {
+    removeFilesInDirectory(jsonDir);
+  },
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
    * for that worker as well as modify runtime environments in an async fashion.
@@ -206,11 +241,9 @@ export const config = {
    * @param {Array.<String>} specs        List of spec file paths that are to be run
    * @param {object}         browser      instance of created browser/device session
    */
-  before: function (capabilities, specs) {
+  //before: function (capabilities, specs) {
 
-    browser.url("https://www.ebay.com/");
-
-  },
+  //},
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name
@@ -233,8 +266,9 @@ export const config = {
    * @param {ITestCaseHookParameter} world    world object containing information on pickle and test step
    * @param {object}                 context  Cucumber World object
    */
-  // beforeScenario: function (world, context) {
-  // },
+  beforeScenario: async function (world, context) {
+    await browser.url('https://www.ebay.com/');
+  },
   /**
    *
    * Runs before a Cucumber Step.
@@ -267,8 +301,36 @@ export const config = {
    * @param {number}                 result.duration  duration of scenario in milliseconds
    * @param {object}                 context          Cucumber World object
    */
-  // afterScenario: function (world, result, context) {
-  // },
+  afterScenario: async function (uri, feature, scenario, result, sourceLocation) {
+    const fileName = 'Screenshot-' + Date.now();
+    const takeScreenshotFor = process.env.TAKE_SCREENSHOT_FOR;
+    const results = {
+      status: uri.result.status,
+      steps: uri.pickle.steps,
+      scenarioName: uri.pickle.name
+    };
+
+    if (!fs.existsSync('screenshots')) {
+      fs.mkdirSync('screenshots');
+    }
+
+    if (takeScreenshotFor === 'failed') {
+      if (results.status === 'FAILED') {
+        const screenshot = await driver.takeScreenshot();
+        await CucumberJsJson.attach(screenshot, 'image/png');
+      }
+    } else if (takeScreenshotFor === 'passed') {
+      if (results.status === 'PASSED') {
+        const screenshot = await driver.takeScreenshot();
+        await CucumberJsJson.attach(screenshot, 'image/png');
+      }
+    } else if (takeScreenshotFor === 'all') {
+      const screenshot = await driver.takeScreenshot();
+      await CucumberJsJson.attach(screenshot, 'image/png');
+    } else if (takeScreenshotFor === 'local') {
+      await driver.saveScreenshot('./screenshots/' + fileName + '.png');
+    }
+  },
   /**
    *
    * Runs after a Cucumber Feature.
@@ -312,8 +374,33 @@ export const config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
+  //onComplete: function (exitCode, config, capabilities, results) {
+  //},
+  onComplete: async function (exitCode, config, capabilities, results) {
+    let screenshotDir;
+    screenshotDir = 'screenshots';
+
+
+    if (!fs.existsSync('report')) {
+      fs.mkdirSync('report');
+    }
+    const options = {
+      theme: 'bootstrap',
+      jsonDir: 'report',
+      output: 'report/cucumber-report.html',
+      reportSuiteAsScenarios: true,
+      scenarioTimestamp: true,
+      launchReport: true,
+      metadata: {
+        "Browser name": 'Chrome',
+        "Test Environment": `${process.env.TEST_ENV}`
+      },
+      failedSummaryReport: true,
+      screenshotsDirectory: screenshotDir,
+      storeScreenshots: true
+    };
+    await reporter.generate(options);
+  },
   /**
   * Gets executed when a refresh happens.
   * @param {string} oldSessionId session ID of the old session
