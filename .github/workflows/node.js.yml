@@ -29,11 +29,10 @@ jobs:
     - name: Run WebdriverIO tests
       run: npm run test  # or npx wdio run wdio.conf.js
 
-    - name: Generate Cucumber HTML report
-      run: node generate-report.js
-
-    - name: Upload HTML Report
+    - name: Upload test report artifact
       uses: actions/upload-artifact@v4
       with:
-        name: cucumber-html-report
-        path: reports/html/cucumber_report.html
+        name: cucumber-json-report
+        path: |
+          reports/json/
+          reports/html/
