@@ -34,5 +34,6 @@ jobs:
       with:
         name: cucumber-json-report
         path: |
-          reports/json/
-          reports/html/
+          report/json/
+          report/cucumber-report.html
+          screenshots/
