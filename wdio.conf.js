@@ -23,15 +23,9 @@ export const config = {
   // Runner Configuration
   // ====================
   // WebdriverIO supports running e2e tests as well as unit and component tests.
-  runner: 'browser',
+  runner: 'local',
 
-  testRunner: {
-    runner: '@wdio/browser-runner',
-    environment: 'chrome',
-    options: {
-      headless: true
-    }
-  },
+
   //
   // ==================
   // Specify Test Files
@@ -76,7 +70,21 @@ export const config = {
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
   // https://saucelabs.com/platform/platform-configurator
   //
-
+  services: ['chromedriver'],
+  capabilities: [{
+    maxInstances: 1,
+    browserName: 'chrome',
+    acceptInsecureCerts: true,
+    'goog:chromeOptions': {
+      args: [
+        '--disable-infobars',
+        '--window-size=1920,1080',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--headless', // uncomment for headless mode
+      ]
+    }
+  }],
   //
   // ===================
   // Test Configurations
