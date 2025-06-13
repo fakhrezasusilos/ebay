@@ -33,7 +33,7 @@ jobs:
       run: node generate-report.js
 
     - name: Upload HTML Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cucumber-html-report
         path: reports/html/cucumber_report.html
