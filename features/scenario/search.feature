@@ -23,3 +23,4 @@ Feature: eBay Search Functionality
   Scenario: Check search suggestion
     Given the user is on the eBay homepage
     When the user enters "smartphone" in the search bar
+    Then the user should see search suggestions related to "smartphone"

@@ -21,3 +21,7 @@ Then('the user should see search results for {string}', async (searchTerm) => {
 Then('the user should see a message indicating no results found', async () => {
   await ProducListing.noSearchResult();
 });
+
+Then('the user should see search suggestions related to {string}', async (searchTerm) => {
+  await Home.searchSuggestion(searchTerm);
+});

@@ -1,6 +1,6 @@
 import HomePage from '../locator/homepage.js';
-import { elementClick, elementSetValue, elementWaitForDisplayed } from '../../helpers/element-action-utils.js';
-import { } from '../../helpers/assertions.js'
+import { elementClick, elementGetText, elementSetValue, elementWaitForDisplayed } from '../../helpers/element-action-utils.js';
+import { expect } from 'chai';
 
 class Home {
   async navigateToHomepage() {
@@ -14,6 +14,15 @@ class Home {
 
   async clickSearchButton() {
     await elementClick(await HomePage.searchButton());
+  }
+
+  async searchSuggestion(searchTerm) {
+    await console.log("Check Top 5 suggestions");
+    for (let i = 0; i < 5; i++) {
+     const suggestionText = await elementGetText(await HomePage.ebaySuggestion(i));
+     const matchFound = suggestionText.replace(/\s/g, '');
+     expect(matchFound).to.include(searchTerm);
+    }
   }
 }
 
