@@ -1,19 +1,19 @@
-import SearchPage from '../locator/search.js';
+import HomePage from '../locator/homepage.js';
 import { elementClick, elementSetValue, elementWaitForDisplayed } from '../../helpers/element-action-utils.js';
 import { } from '../../helpers/assertions.js'
 
 class Home {
   async navigateToHomepage() {
     await browser.url('https://www.ebay.com/');
-    await elementWaitForDisplayed(await SearchPage.searchInput());
+    await elementWaitForDisplayed(await HomePage.searchInput());
   }
 
   async enterSearchTerm(searchTerm) {
-    await elementSetValue(await SearchPage.searchInput(), searchTerm);
+    await elementSetValue(await HomePage.searchInput(), searchTerm);
   }
 
   async clickSearchButton() {
-    await elementClick(await SearchPage.searchButton());
+    await elementClick(await HomePage.searchButton());
   }
 }
 

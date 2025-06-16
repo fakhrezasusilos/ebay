@@ -1,17 +1,5 @@
 class SearchPage {
 
-  async searchInput() {
-    return $('#gh-ac');
-  }
-
-  async searchButton() {
-    return $('#gh-search-btn');
-  }
-
-  async categoryDropdown() {
-    return $('#gh-cat');
-  }
-
   async searchResult() {
     return $('.srp-controls__count-heading');
   }

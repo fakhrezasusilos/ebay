@@ -1,6 +1,5 @@
 import SearchPage from '../locator/search.js';
-import { elementWaitForDisplayed } from '../../helpers/element-action-utils.js';
-import {  assertElementIsNotDisplayed, assertIncludeText } from '../../helpers/assertions.js'
+import {  assertIncludeText } from '../../helpers/assertions.js'
 
 class ProducListing {
 

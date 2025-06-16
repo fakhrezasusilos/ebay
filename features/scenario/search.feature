@@ -19,3 +19,7 @@ Feature: eBay Search Functionality
     When the user enters "asdkjfhqwe" in the search bar
     And clicks on the search button
     Then the user should see a message indicating no results found
+
+  Scenario: Check search suggestion
+    Given the user is on the eBay homepage
+    When the user enters "smartphone" in the search bar
